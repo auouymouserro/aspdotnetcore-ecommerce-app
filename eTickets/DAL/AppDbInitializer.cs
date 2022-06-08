@@ -1,14 +1,14 @@
-﻿using eTickets.Data.enums;
+﻿using eTickets.DAL.enums;
 using eTickets.Models;
 
-namespace eTickets.Data
+namespace eTickets.DAL
 {
     public class AppDbInitializer
     {
         public static void Seed(IApplicationBuilder applicationBuilder)
         {
-            using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
-            var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+            //using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
+            var context = applicationBuilder.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
 
             context.Database.EnsureCreated();
 

@@ -1,14 +1,26 @@
-using eTickets.Data;
+using eTickets.DAL;
+using eTickets.DTL;
+using eTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
-
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 // Add DbContext to container
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnectionString")); 
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnectionString"));
+
+// Add Repo
+builder.Services.AddScoped<IGenRepo<Actor, int>, GenRepo<Actor, int>>();
+builder.Services.AddScoped<IGenRepo<Movie, int>, GenRepo<Movie, int>>();
+builder.Services.AddScoped<IGenRepo<Producer, int>, GenRepo<Producer, int>>();
+builder.Services.AddScoped<IGenRepo<Cinema, int>, GenRepo<Cinema, int>>();
+
+
 
 var app = builder.Build();
 
@@ -29,7 +41,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{key?}");
 
 // Seed Database
 AppDbInitializer.Seed(app);

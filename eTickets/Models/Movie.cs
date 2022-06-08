@@ -1,13 +1,11 @@
-﻿using eTickets.Data.enums;
+﻿using eTickets.DAL.enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace eTickets.Models
 {
-    public class Movie
+    public class Movie : Entity<int>
     {
-        [Key]
-        public int Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public double Price { get; set; }
@@ -15,11 +13,13 @@ namespace eTickets.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public MovieCategory MovieCategory { get; set; }
-        
+
+        public bool Disabled { get; set; }
+
         /// <summary>
         /// Relationships with
         /// </summary>
-        
+
         // Actor_Movie
         public List<Actor_Movie>? Actors_Movies { get; set; }
 
