@@ -1,50 +1,68 @@
 ﻿using eTickets.DAL;
 using Microsoft.EntityFrameworkCore;
 using eTickets.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace eTickets.DTL
 {
     public interface IGenRepo<T, TKey>
     {
-        T Add(T entity);
-        List<T> GetList();
-        T Put(T entity);
-        T Get(TKey id);
+        IEnumerable<T> GetListAsync(); // read list of T from db
+        Task<T> GetAsync(TKey id); // read element T by its id TKey from db
+        Task PostAsync(T entity); // create element T in db
+        Task PutAsync(T entity, TKey id); // update element in db
+        Task DeleteAsync(TKey id); // delete element from db
     }
 
     public class GenRepo<T, TKey> : IGenRepo<T, TKey> where T : Entity<TKey>
     {
-        public DbSet<T> _DbSet { get; set; }
-
+        public DbSet<T> DbSet { get; set; }
         public AppDbContext _context;
 
+        // Repository constructor
         public GenRepo(AppDbContext context)
         {
             _context = context;
-            _DbSet = context.Set<T>();
+            DbSet = context.Set<T>();
         }
 
-        public List<T> GetList() => _DbSet.ToList();
 
-        public T Get(TKey key)
-        {
-            return _DbSet.Find(key);
-        }
+        // GetList of T from db /////////////////////////////////////////////////////////////////////////
+        public IEnumerable<T> GetListAsync() => DbSet.ToList();
 
-        public T Put(T entity)
+
+
+        // Get T by id from db //////////////////////////////////////////////////////////////////////////
+        public async Task<T> GetAsync(TKey id) => await DbSet.FindAsync(id);
+
+
+
+        // Post T in db /////////////////////////////////////////////////////////////////////////////////
+        public async Task PostAsync(T entity)
         {
+            await DbSet.AddAsync(entity);
             _context.SaveChanges();
-            return entity;
         }
 
-        public T Add(T entity)
+
+        // Put T in db //////////////////////////////////////////////////////////////////////////////////
+        public async Task PutAsync(T entity, TKey id)
         {
-            _DbSet.Add(entity);
+            EntityEntry entry = _context.Entry<T>(entity);
+            entry.State = EntityState.Modified;
             _context.SaveChanges();
-            return entity;
         }
 
-        
+
+        // Delete T from db ////////////////////////////////////////////////////////////////////////////
+        public async Task DeleteAsync(TKey id)
+        {
+            var entity = await DbSet.FindAsync(id);
+            EntityEntry entry = _context.Entry<T>(entity);
+            entry.State = EntityState.Deleted;
+            _context.SaveChanges();
+
+        }
 
     }
 }

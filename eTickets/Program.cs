@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Post services to the container
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
-// Add DbContext to container
+// Post DbContext to container
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnectionString"));
 
-// Add Repo
+// Post Repo
 builder.Services.AddScoped<IGenRepo<Actor, int>, GenRepo<Actor, int>>();
 builder.Services.AddScoped<IGenRepo<Movie, int>, GenRepo<Movie, int>>();
 builder.Services.AddScoped<IGenRepo<Producer, int>, GenRepo<Producer, int>>();
@@ -41,7 +41,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{key?}");
+    pattern: "{controller=Movies}/{action=Index}/{id?}");
 
 // Seed Database
 AppDbInitializer.Seed(app);

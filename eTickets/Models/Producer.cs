@@ -4,7 +4,7 @@ namespace eTickets.Models
 {
     public class Producer : Entity<int>
     {
-        public string? ProfilePictureURL { get; set; }
+        public string? ProfilePicture { get; set; }
         public string? FullName { get; set; }
         public string? Bio { get; set; }
 

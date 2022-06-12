@@ -5,9 +5,7 @@ namespace eTickets.Controllers
 {
     public class CinemasController : GenericController<Cinema, int>
     {
-        public CinemasController(IGenRepo<Cinema, int> context) : base(context)
-        {
-        }
+        public CinemasController(IGenRepo<Cinema, int> repo) : base(repo) { }
 
     }
 }
